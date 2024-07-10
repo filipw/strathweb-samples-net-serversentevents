@@ -1,17 +1,16 @@
 ﻿using System.Net.ServerSentEvents;
 using System.Text.Json;
 
-Console.WriteLine("Started!");
+using var client = new HttpClient();
+using var stream = await client.GetStreamAsync("http://localhost:5068/weatherforecast");
 
-using HttpClient client = new();
-using Stream stream = await client.GetStreamAsync("http://localhost:5068/weatherforecast");
-
-// as string
+// option 1: as string
 //await foreach (SseItem<string> item in SseParser.Create(stream).EnumerateAsync())
 //{
 //    Console.WriteLine(item.Data);
 //}
 
+// option 2: typed
 await foreach (SseItem<WeatherForecast?> item in SseParser.Create(stream, (eventType, bytes) => JsonSerializer.Deserialize<WeatherForecast>(bytes)).EnumerateAsync())
 {
     if (item.Data != null)
@@ -24,6 +23,4 @@ await foreach (SseItem<WeatherForecast?> item in SseParser.Create(stream, (event
     }
 }
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-}
+record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary);

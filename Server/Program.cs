@@ -34,6 +34,4 @@ app.MapGet("/weatherforecast", async (HttpContext ctx) =>
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-}
+record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary);
